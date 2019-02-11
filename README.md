@@ -277,7 +277,7 @@ The CURL example as a request:
 curl "http://localhost:8000/stars/address:13Js7D3q4KvfSqgKN8LpNq57gcahrVc5JZ"
 ``` 
 
-I did this in the function `getBlockByWalletAddress()` in lines 101 to 117 of `levelSandbox.js`, and ``getBlockByWalletAddress()` in `BlockController.js` for the endpoint.
+I did this in the function `getBlockByWalletAddress()` in lines 101 to 117 of `levelSandbox.js`, and `getBlockByWalletAddress()` in `BlockController.js` for the endpoint.
 
 This endpoint returns a list of stars registered by one user.
 
