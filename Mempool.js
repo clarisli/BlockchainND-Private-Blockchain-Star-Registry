@@ -19,11 +19,12 @@ class Mempool {
  	}
 
  	addRequestValidation(walletAddress) {
+ 		let self = this;
  		let request = this.mempool[walletAddress];
  		if (request === undefined) {
  			request = this._createRequestObject(walletAddress);
  			this.mempool[walletAddress] = request;
- 			this.timeoutRequests[walletAddress]=setTimeout(function(){ this._removeValidationRequest(walletAddress) }, TimeoutRequestsWindowTime );
+ 			this.timeoutRequests[walletAddress]=setTimeout(function(){ self._removeValidationRequest(walletAddress) }, TimeoutRequestsWindowTime );
  		}
  		request.validationWindow = this._getRequestValidationWindow(request.requestTimeStamp, TimeoutRequestsWindowTime);
  		return request
@@ -58,7 +59,6 @@ class Mempool {
  		if (validRequest === undefined) {
 	 		validRequest = this._validateRequestInMempool(walletAddress, signature);
  		}
- 		console.log(validRequest);
  		if (validRequest) {
  			validRequest.status.validationWindow = this._getRequestValidationWindow(validRequest.status.requestTimeStamp, TimeoutValidRequestsWindowTime);
  			return validRequest;
@@ -68,15 +68,15 @@ class Mempool {
  	}
 
  	_validateRequestInMempool(walletAddress, signature) {
+ 		let self = this
  		let request = this.mempool[walletAddress];
 	 	if (request) {
 		 	if (this._isRequestValid(request, signature)) {
 		 		// Create the new object and save it into the mempoolValid array 
 		 		let validRequest = this._createValidRequestObj(request);
 		 		this.mempoolValid[walletAddress] = validRequest;
-		 		this.timeoutValidRequests[walletAddress]=setTimeout(function(){ this._removeValidRequest(walletAddress) }, TimeoutValidRequestsWindowTime );
+		 		this.timeoutValidRequests[walletAddress]=setTimeout(function(){ self._removeValidRequest(walletAddress) }, TimeoutValidRequestsWindowTime );
 		 		this._removeValidationRequestAndClearTimeout(walletAddress);
-		 		console.log(this.mempoolValid);
 		 		return validRequest;
 		 	}
 	 	}
@@ -112,11 +112,15 @@ class Mempool {
  	}
 
  	_removeValidationRequestAndClearTimeout(walletAddress) {
- 		clearTimeout(this.timeoutRequests.walletAddress);
+ 		clearTimeout(this.timeoutRequests[walletAddress]);
  		this._removeValidationRequest(walletAddress);
  	}
 
- 	// Verify if the request validation exists and if it is valid.
+ 	removeValidRequestAndClearTimeout(walletAddress) {
+ 	 	clearTimeout(this.timeoutValidRequests[walletAddress]);
+ 		this._removeValidRequest(walletAddress);	
+ 	}
+
  	verifyAddressRequest(walletAddress) {
  		let validRequest = this.mempoolValid[walletAddress];
  		if (validRequest) {

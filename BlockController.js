@@ -18,7 +18,6 @@ class BlockController {
         this.app = app;
         this.blockChain = new BlockchainClass.Blockchain();
         this.mempool = new MempoolClass.Mempool();
-        this.getBlockByIndex();
         this.getBlockByHash();
         this.getBlocksByAddress();
         this.getBlockByHeight();
@@ -27,17 +26,6 @@ class BlockController {
         this.postValidateSignature();
     }
 
-    /**
-     * Implement a GET Endpoint to retrieve a block by index, url: "/block/:index"
-     */
-    getBlockByIndex() {
-        this.app.get("/block/:index", (req, res) => {
-            let blockHeight = req.params["index"];
-            this.blockChain.getBlock(blockHeight).then((block) => {
-                res.json(block);
-            }).catch((err) => {console.log(err);});
-        });
-    }
 
     /**
      * Implement a GET Endpoint to retrieve a block by hash, url: "/stars/hash::hash"
@@ -77,7 +65,7 @@ class BlockController {
      * Implement a GET Endpoint to retrieve a block by height, url: "/stars/height::height"
      */
     getBlockByHeight() {
-        this.app.get("/stars/height::height", (req, res) => {
+        this.app.get("/block/:height", (req, res) => {
             let height = req.params["height"];
             this.blockChain.getBlock(height).then((block) => {
                 if(block) {
@@ -109,6 +97,7 @@ class BlockController {
                     req.body.star.story = this._encode(req.body.star.story)
                     let newBlock = new BlockClass.Block(req.body);
                     this.blockChain.addBlock(newBlock).then((newBlock) => {
+                        this.mempool.removeValidRequestAndClearTimeout(req.body.address);
                         newBlock.body.star.storyDecoded = this._decode(newBlock.body.star.story);
                         res.json(newBlock);
                     }).catch((err) => {
@@ -117,8 +106,6 @@ class BlockController {
                 } else {
                     res.status(403).json({ error: 'Wallet address is not valid.' });
                 }
-
-
                 
         });
     }

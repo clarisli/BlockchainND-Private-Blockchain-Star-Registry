@@ -287,7 +287,7 @@ The CURL example as a request:
 
 ```
 // Curl request
-curl "http://localhost:8000/stars/height:5"
+curl "http://localhost:8000/block/1"
 ``` 
 
 I did this in the function `getLevelDBData()` in lines 30 to 44 of `levelSandbox.js`, and `getBlockByHeight()` in `BlockController.js` for the endpoint.
